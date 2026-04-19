@@ -34,10 +34,10 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME}"
 
-          ARM64_FILE=$(ls dist/*_Darwin_arm64.tar.gz)
-          AMD64_FILE=$(ls dist/*_Darwin_amd64.tar.gz)
-          ARM64_SHA=$(sha256sum "$ARM64_FILE" | awk '{print $1}')
-          AMD64_SHA=$(sha256sum "$AMD64_FILE" | awk '{print $1}')
+          DARWIN_ARM64_SHA=$(sha256sum dist/*_Darwin_arm64.tar.gz | awk '{print $1}')
+          DARWIN_AMD64_SHA=$(sha256sum dist/*_Darwin_amd64.tar.gz | awk '{print $1}')
+          LINUX_ARM64_SHA=$(sha256sum dist/*_Linux_arm64.tar.gz | awk '{print $1}')
+          LINUX_AMD64_SHA=$(sha256sum dist/*_Linux_amd64.tar.gz | awk '{print $1}')
 
           mkdir -p ~/.ssh
           echo "$TAP_DEPLOY_KEY" > ~/.ssh/tap_deploy_key
@@ -56,11 +56,22 @@ jobs:
             on_macos do
               on_arm do
                 url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Darwin_arm64.tar.gz"
-                sha256 "${ARM64_SHA}"
+                sha256 "${DARWIN_ARM64_SHA}"
               end
               on_intel do
                 url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Darwin_amd64.tar.gz"
-                sha256 "${AMD64_SHA}"
+                sha256 "${DARWIN_AMD64_SHA}"
+              end
+            end
+
+            on_linux do
+              on_arm do
+                url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Linux_arm64.tar.gz"
+                sha256 "${LINUX_ARM64_SHA}"
+              end
+              on_intel do
+                url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Linux_amd64.tar.gz"
+                sha256 "${LINUX_AMD64_SHA}"
               end
             end
 
