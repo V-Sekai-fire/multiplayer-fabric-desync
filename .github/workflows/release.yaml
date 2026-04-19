@@ -92,3 +92,68 @@ jobs:
           git diff --cached --quiet || \
             git commit -m "chore: update multiplayer-fabric-desync to ${VERSION}"
           GIT_SSH_COMMAND="ssh -i ~/.ssh/tap_deploy_key" git push
+
+      - name: Update Scoop bucket
+        env:
+          TAP_DEPLOY_KEY: ${{ secrets.TAP_DEPLOY_KEY }}
+        run: |
+          VERSION="${GITHUB_REF_NAME}"
+
+          WIN_AMD64_SHA=$(sha256sum dist/*_Windows_amd64.zip | awk '{print $1}')
+          WIN_ARM64_SHA=$(sha256sum dist/*_Windows_arm64.zip | awk '{print $1}')
+
+          mkdir -p ~/.ssh
+          echo "$TAP_DEPLOY_KEY" > ~/.ssh/tap_deploy_key
+          chmod 600 ~/.ssh/tap_deploy_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/tap_deploy_key" \
+            git clone git@github.com:V-Sekai-fire/scoop-multiplayer-fabric.git scoop
+
+          cat > scoop/bucket/multiplayer-fabric-desync.json <<MANIFEST
+          {
+            "version": "${VERSION#v}",
+            "description": "Content-addressed binary distribution for multiplayer fabric",
+            "homepage": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync",
+            "license": "Apache-2.0",
+            "architecture": {
+              "64bit": {
+                "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Windows_amd64.zip",
+                "hash": "${WIN_AMD64_SHA}"
+              },
+              "arm64": {
+                "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Windows_arm64.zip",
+                "hash": "${WIN_ARM64_SHA}"
+              }
+            },
+            "bin": "desync.exe",
+            "checkver": {
+              "github": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync"
+            },
+            "autoupdate": {
+              "architecture": {
+                "64bit": {
+                  "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/v\$version/multiplayer-fabric-desync_Windows_amd64.zip",
+                  "hash": {
+                    "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/v\$version/checksums.txt",
+                    "regex": "([a-f0-9]{64})\\\\s+multiplayer-fabric-desync_Windows_amd64.zip"
+                  }
+                },
+                "arm64": {
+                  "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/v\$version/multiplayer-fabric-desync_Windows_arm64.zip",
+                  "hash": {
+                    "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/v\$version/checksums.txt",
+                    "regex": "([a-f0-9]{64})\\\\s+multiplayer-fabric-desync_Windows_arm64.zip"
+                  }
+                }
+              }
+            }
+          }
+          MANIFEST
+
+          cd scoop
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add bucket/multiplayer-fabric-desync.json
+          git diff --cached --quiet || \
+            git commit -m "chore: update multiplayer-fabric-desync to ${VERSION}"
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/tap_deploy_key" git push
