@@ -34,10 +34,15 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME}"
 
-          DARWIN_ARM64_SHA=$(sha256sum dist/*_Darwin_arm64.tar.gz | awk '{print $1}')
-          DARWIN_AMD64_SHA=$(sha256sum dist/*_Darwin_amd64.tar.gz | awk '{print $1}')
-          LINUX_ARM64_SHA=$(sha256sum dist/*_Linux_arm64.tar.gz | awk '{print $1}')
-          LINUX_AMD64_SHA=$(sha256sum dist/*_Linux_amd64.tar.gz | awk '{print $1}')
+          DARWIN_ARM64_FILE=$(basename dist/*_Darwin_arm64.tar.gz)
+          DARWIN_AMD64_FILE=$(basename dist/*_Darwin_amd64.tar.gz)
+          LINUX_ARM64_FILE=$(basename dist/*_Linux_arm64.tar.gz)
+          LINUX_AMD64_FILE=$(basename dist/*_Linux_amd64.tar.gz)
+
+          DARWIN_ARM64_SHA=$(sha256sum dist/${DARWIN_ARM64_FILE} | awk '{print $1}')
+          DARWIN_AMD64_SHA=$(sha256sum dist/${DARWIN_AMD64_FILE} | awk '{print $1}')
+          LINUX_ARM64_SHA=$(sha256sum dist/${LINUX_ARM64_FILE} | awk '{print $1}')
+          LINUX_AMD64_SHA=$(sha256sum dist/${LINUX_AMD64_FILE} | awk '{print $1}')
 
           mkdir -p ~/.ssh
           echo "$TAP_DEPLOY_KEY" > ~/.ssh/tap_deploy_key
@@ -55,22 +60,22 @@ jobs:
 
             on_macos do
               on_arm do
-                url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Darwin_arm64.tar.gz"
+                url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/${DARWIN_ARM64_FILE}"
                 sha256 "${DARWIN_ARM64_SHA}"
               end
               on_intel do
-                url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Darwin_amd64.tar.gz"
+                url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/${DARWIN_AMD64_FILE}"
                 sha256 "${DARWIN_AMD64_SHA}"
               end
             end
 
             on_linux do
               on_arm do
-                url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Linux_arm64.tar.gz"
+                url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/${LINUX_ARM64_FILE}"
                 sha256 "${LINUX_ARM64_SHA}"
               end
               on_intel do
-                url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Linux_amd64.tar.gz"
+                url "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/${LINUX_AMD64_FILE}"
                 sha256 "${LINUX_AMD64_SHA}"
               end
             end
@@ -99,8 +104,11 @@ jobs:
         run: |
           VERSION="${GITHUB_REF_NAME}"
 
-          WIN_AMD64_SHA=$(sha256sum dist/*_Windows_amd64.zip | awk '{print $1}')
-          WIN_ARM64_SHA=$(sha256sum dist/*_Windows_arm64.zip | awk '{print $1}')
+          WIN_AMD64_FILE=$(basename dist/*_Windows_amd64.zip)
+          WIN_ARM64_FILE=$(basename dist/*_Windows_arm64.zip)
+
+          WIN_AMD64_SHA=$(sha256sum dist/${WIN_AMD64_FILE} | awk '{print $1}')
+          WIN_ARM64_SHA=$(sha256sum dist/${WIN_ARM64_FILE} | awk '{print $1}')
 
           mkdir -p ~/.ssh
           echo "$TAP_DEPLOY_KEY" > ~/.ssh/tap_deploy_key
@@ -117,11 +125,11 @@ jobs:
             "license": "Apache-2.0",
             "architecture": {
               "64bit": {
-                "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Windows_amd64.zip",
+                "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/${WIN_AMD64_FILE}",
                 "hash": "${WIN_AMD64_SHA}"
               },
               "arm64": {
-                "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/multiplayer-fabric-desync_Windows_arm64.zip",
+                "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/${VERSION}/${WIN_ARM64_FILE}",
                 "hash": "${WIN_ARM64_SHA}"
               }
             },
@@ -132,17 +140,17 @@ jobs:
             "autoupdate": {
               "architecture": {
                 "64bit": {
-                  "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/v\$version/multiplayer-fabric-desync_Windows_amd64.zip",
+                  "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/v\$version/multiplayer-fabric-desync_\$version_Windows_amd64.zip",
                   "hash": {
                     "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/v\$version/checksums.txt",
-                    "regex": "([a-f0-9]{64})\\\\s+multiplayer-fabric-desync_Windows_amd64.zip"
+                    "regex": "([a-f0-9]{64})\\\\s+multiplayer-fabric-desync_\$version_Windows_amd64.zip"
                   }
                 },
                 "arm64": {
-                  "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/v\$version/multiplayer-fabric-desync_Windows_arm64.zip",
+                  "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/v\$version/multiplayer-fabric-desync_\$version_Windows_arm64.zip",
                   "hash": {
                     "url": "https://github.com/V-Sekai-fire/multiplayer-fabric-desync/releases/download/v\$version/checksums.txt",
-                    "regex": "([a-f0-9]{64})\\\\s+multiplayer-fabric-desync_Windows_arm64.zip"
+                    "regex": "([a-f0-9]{64})\\\\s+multiplayer-fabric-desync_\$version_Windows_arm64.zip"
                   }
                 }
               }
