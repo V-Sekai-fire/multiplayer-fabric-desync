@@ -29,6 +29,8 @@ still green.
 - **Commit every green.** One commit per feature cycle.  Messages use
   sentence case and describe what changed, e.g. `Add S3 store chunked
   upload support` or `Fix chunk boundary detection for small files`.
+  Do not use Conventional Commits prefixes (`feat:`, `fix:`, `chore:`,
+  etc.).
 
 ## Workflow
 
