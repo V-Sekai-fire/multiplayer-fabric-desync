@@ -26,8 +26,9 @@ still green.
   inside library code.
 - **No global state.** Options are passed explicitly.  `init()` blocks
   that modify global state are not permitted outside `cmd/`.
-- **Commit every green.** One commit per feature cycle.  Message starts
-  with the area: `store: ...`, `cmd/desync: ...`, `chunk: ...`.
+- **Commit every green.** One commit per feature cycle.  Messages use
+  sentence case and describe what changed, e.g. `Add S3 store chunked
+  upload support` or `Fix chunk boundary detection for small files`.
 
 ## Workflow
 
